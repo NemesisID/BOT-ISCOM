@@ -68,6 +68,7 @@ transcripts/
 secrets/
 # In case secrets is a folder with environments
 secrets/.env
+DEPLOYMENT.md
 
 # Environment variables
 .env
