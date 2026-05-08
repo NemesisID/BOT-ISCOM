@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 import traceback, sys
+import asyncio
 
 from reo.src.checks import checks
 from reo.console.logging import logger
@@ -16,7 +17,7 @@ class Counters(commands.Cog):
         self.task = None
 
     async def cog_load(self):
-        self.task = self.bot.loop.create_task(self._update_counters_loop())
+        self.task = asyncio.create_task(self._update_counters_loop())
 
     async def cog_unload(self):
         if self.task:
