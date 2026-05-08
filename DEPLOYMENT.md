@@ -113,8 +113,8 @@ mongosh
 # Di mongosh shell
 use iscom
 db.createUser({
-  user: "iscom_user",
-  pwd: "password_yang_kuat",
+  user: "GANTI_USERNAME_DISINI",
+  pwd: "GANTI_PASSWORD_KUAT_DISINI",
   roles: [{ role: "readWrite", db: "iscom" }]
 })
 exit
@@ -136,18 +136,18 @@ usermod -aG sudo iscom
 su - iscom
 
 # Atau sebagai root, lalu chown
-mkdir -p /opt/iscom-bot
-cd /opt/iscom-bot
+mkdir -p /opt/iscom-bot/BOT-ISCOM
+cd /opt/iscom-bot/BOT-ISCOM
 
 # Jika dari git
-git clone https://github.com/username/iscom-bot.git .
+git clone https://github.com/NemesisID/BOT-ISCOM.git .
 
 # Atau copy files via SCP/SFTP
 ```
 
 ### Set Permissions
 ```bash
-chown -R iscom:iscom /opt/iscom-bot
+chown -R iscom:iscom /opt/iscom-bot/BOT-ISCOM
 ```
 
 ---
@@ -156,7 +156,7 @@ chown -R iscom:iscom /opt/iscom-bot
 
 ### Buat Virtual Environment
 ```bash
-cd /opt/iscom-bot
+cd /opt/iscom-bot/BOT-ISCOM
 python3 -m venv venv
 source venv/bin/activate
 ```
@@ -187,7 +187,7 @@ DASHBOARD_SECRET="iscom-random-secret-string-change-this"
 DASHBOARD_BASE_URL="http://your-domain.com:25572"
 
 # MongoDB Database Configuration
-MONGO_URI="mongodb://iscom_user:password_yang_kuat@localhost:27017/iscom?authSource=iscom"
+MONGO_URI="mongodb://GANTI_USERNAME:GANTI_PASSWORD@localhost:27017/iscom?authSource=iscom"
 
 # Web / Dashboard
 DASHBOARD_ENABLED="True"
@@ -198,10 +198,10 @@ WEB_PORT="25572"
 SYNC_EMOJIS="False"
 
 # Logging & Channel Configuration
-REPORT_CHANNEL="YOUR_CHANNEL_ID"
-GUILD_JOIN_WEBHOOK=""
+REPORT_CHANNEL=""
+GUILD_JOIN_WEBHOOK="1500926701494993043"
 GUILD_LEAVE_WEBHOOK=""
-SHARDS_LOG_WEBHOOK=""
+SHARDS_LOG_WEBHOOK="1500927194422054995"
 
 # Authorized Users
 DEVELOPER_IDS="YOUR_DISCORD_ID"
@@ -227,9 +227,9 @@ Wants=mongod.service
 Type=simple
 User=iscom
 Group=iscom
-WorkingDirectory=/opt/iscom-bot
-Environment="PATH=/opt/iscom-bot/venv/bin"
-ExecStart=/opt/iscom-bot/venv/bin/python main.py
+WorkingDirectory=/opt/iscom-bot/BOT-ISCOM
+Environment="PATH=/opt/iscom-bot/BOT-ISCOM/venv/bin"
+ExecStart=/opt/iscom-bot/BOT-ISCOM/venv/bin/python main.py
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartSec=10
@@ -273,7 +273,7 @@ nano /etc/nginx/sites-available/iscom-bot
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
+    server_name dash-iscom.isslab.web.id;
 
     location / {
         proxy_pass http://127.0.0.1:25572;
@@ -291,9 +291,9 @@ server {
 
 ### Enable Site
 ```bash
-ln -s /etc/nginx/sites-available/iscom-bot /etc/nginx/sites-enabled/
-nginx -t
-systemctl restart nginx
+sudo ln -s /etc/nginx/sites-available/iscom-bot /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
 ```
 
 ### Setup SSL dengan Certbot
@@ -346,7 +346,7 @@ nano /etc/logrotate.d/iscom-bot
 ```
 
 ```
-/opt/iscom-bot/logs/*.log {
+/opt/iscom-bot/BOT-ISCOM/logs/*.log {
     daily
     missingok
     rotate 14
@@ -371,7 +371,7 @@ nano /etc/logrotate.d/iscom-bot
 journalctl -u iscom-bot -f
 
 # Bot logs
-tail -f /opt/iscom-bot/logs/*.log
+tail -f /opt/iscom-bot/BOT-ISCOM/logs/*.log
 ```
 
 ### Check Service Status
@@ -386,7 +386,7 @@ systemctl restart iscom-bot
 
 ### Update Bot
 ```bash
-cd /opt/iscom-bot
+cd /opt/iscom-bot/BOT-ISCOM
 systemctl stop iscom-bot
 git pull  # atau upload files baru
 source venv/bin/activate
@@ -407,7 +407,7 @@ nano /opt/backup-iscom.sh
 #!/bin/bash
 BACKUP_DIR="/backup/iscom"
 DATE=$(date +%Y%m%d_%H%M%S)
-BOT_DIR="/opt/iscom-bot"
+BOT_DIR="/opt/iscom-bot/BOT-ISCOM"
 
 mkdir -p $BACKUP_DIR
 
@@ -447,7 +447,7 @@ crontab -e
 journalctl -u iscom-bot -n 50
 
 # Check Python
-cd /opt/iscom-bot
+cd /opt/iscom-bot/BOT-ISCOM
 source venv/bin/activate
 python main.py  # Run manual untuk debug
 ```
@@ -495,7 +495,7 @@ systemctl restart iscom-bot
 | Restart bot | `systemctl restart iscom-bot` |
 | Status bot | `systemctl status iscom-bot` |
 | View logs | `journalctl -u iscom-bot -f` |
-| Update bot | `cd /opt/iscom-bot && git pull && systemctl restart iscom-bot` |
+| Update bot | `cd /opt/iscom-bot/BOT-ISCOM && git pull && systemctl restart iscom-bot` |
 | Backup | `/opt/backup-iscom.sh` |
 
 ---
@@ -506,7 +506,7 @@ systemctl restart iscom-bot
 - [ ] System updated
 - [ ] Python 3.11 installed
 - [ ] MongoDB installed dan running
-- [ ] Bot files di `/opt/iscom-bot`
+- [ ] Bot files di `/opt/iscom-bot/BOT-ISCOM`
 - [ ] Virtual environment created
 - [ ] Dependencies installed
 - [ ] `.env` configured

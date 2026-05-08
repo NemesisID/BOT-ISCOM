@@ -29,7 +29,8 @@ class urls:
 
 
 class channels:
-    report_channel = int(os.getenv("REPORT_CHANNEL"))
+    _report_channel = os.getenv("REPORT_CHANNEL", "")
+    report_channel = int(_report_channel) if _report_channel and _report_channel.isdigit() else None
     guild_join_webhook = os.getenv("GUILD_JOIN_WEBHOOK", "")
     guild_leave_webhook = os.getenv("GUILD_LEAVE_WEBHOOK", "")
     shards_log_webhook = os.getenv("SHARDS_LOG_WEBHOOK", "")
