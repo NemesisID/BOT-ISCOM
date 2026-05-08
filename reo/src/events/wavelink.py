@@ -13,8 +13,8 @@ from reo.style import color
 
 import discord
 
-from reo.src.startup import giveaways
-from reo.src.startup import j2c_controller
+# from reo.src.startup import giveaways
+# from reo.src.startup import j2c_controller
 class Wavelink(commands.Cog):
     def __init__(self, bot):
         self.bot:AutoShardedBot = bot
