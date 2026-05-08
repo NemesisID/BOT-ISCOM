@@ -13,6 +13,8 @@ from storage import guilds
 from storage import guilds_backup
 from storage import guilds_log
 from storage import ignore_data
+from storage import j2c
+from storage import j2c_settings
 from storage import media_channels
 from storage import music
 from storage import redeem_codes
@@ -20,3 +22,4 @@ from storage import shop
 from storage import snipe_data
 from storage import users
 from storage import welcomer_settings
+

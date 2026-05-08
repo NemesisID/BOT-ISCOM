@@ -65,6 +65,8 @@ from storage import shop as shop_db
 
 
 from storage import music as music_db
+from storage import j2c as j2c_db
+from storage import j2c_settings as j2c_settings_db
 
 
 from reo.memory.cache import cache
@@ -1481,6 +1483,100 @@ class Counters:
         logger.database(f"Counters - {guild_id} cache updated")
 
 
+class J2C:
+
+    def __init__(self):
+
+        cache.j2c = {}
+
+    async def initialize(self):
+
+        cache.j2c = {}
+
+        j2c_datas = await j2c_db.get_all()
+
+        for data in j2c_datas:
+
+            cache.j2c[str(data["channel_id"])] = data
+
+        logger.database(f"All J2C cache loaded ✅")
+
+    async def delete(self, channel_id):
+
+        if str(channel_id) in cache.j2c:
+
+            del cache.j2c[str(channel_id)]
+
+            logger.database(f"J2C - {channel_id} cache deleted ✅")
+
+        else:
+
+            logger.error(f"J2C - {channel_id} cache not found ❌")
+
+    async def update(self, channel_id, data=None):
+
+        if not data:
+
+            data = await j2c_db.get(channel_id=channel_id)
+
+        if not data:
+
+            logger.error(f"J2C - {channel_id} cache not found ❌")
+
+            return
+
+        cache.j2c[str(channel_id)] = data
+
+        logger.database(f"J2C - {channel_id} cache updated ✅")
+
+
+class J2C_Settings:
+
+    def __init__(self):
+
+        cache.j2c_settings = {}
+
+    async def initialize(self):
+
+        cache.j2c_settings = {}
+
+        j2c_settings_datas = await j2c_settings_db.get_all()
+
+        for data in j2c_settings_datas:
+
+            cache.j2c_settings[str(data["guild_id"])] = data
+
+        logger.database(f"All J2C Settings cache loaded ✅")
+
+    async def delete(self, guild_id):
+
+        if str(guild_id) in cache.j2c_settings:
+
+            del cache.j2c_settings[str(guild_id)]
+
+            logger.database(f"J2C Settings - {guild_id} cache deleted ✅")
+
+        else:
+
+            logger.error(f"J2C Settings - {guild_id} cache not found ❌")
+
+    async def update(self, guild_id, data=None):
+
+        if not data:
+
+            data = await j2c_settings_db.get(guild_id=guild_id)
+
+        if not data:
+
+            logger.error(f"J2C Settings - {guild_id} cache not found ❌")
+
+            return
+
+        cache.j2c_settings[str(guild_id)] = data
+
+        logger.database(f"J2C Settings - {guild_id} cache updated ✅")
+
+
 guilds_cache = Guilds()
 
 
@@ -1547,6 +1643,12 @@ ai_settings_cache = AISettings()
 counters_cache = Counters()
 
 
+j2c_cache = J2C()
+
+
+j2c_settings_cache = J2C_Settings()
+
+
 async def load_cache():
 
     tasks = [
@@ -1572,6 +1674,8 @@ async def load_cache():
         command_access_cache.initialize(),
         ai_settings_cache.initialize(),
         counters_cache.initialize(),
+        j2c_cache.initialize(),
+        j2c_settings_cache.initialize(),
     ]
 
     await asyncio.gather(*tasks)

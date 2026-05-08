@@ -19,6 +19,8 @@ async def load_storage():
         storage.snipe_data.create_table(),
         storage.ignore_data.create_table(),
         storage.ban_data.create_table(),
+        storage.j2c.create_table(),
+        storage.j2c_settings.create_table(),
         storage.command_access.create_table(),
         storage.automod.create_table(),
         storage.custom_roles.create_table(),
