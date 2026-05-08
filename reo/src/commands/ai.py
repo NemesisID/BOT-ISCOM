@@ -14,6 +14,13 @@ import storage
 class AI(commands.Cog):
     def __init__(self, bot):
         self.bot: AutoShardedBot = bot
+        class cog_info:
+            name = "AI"
+            category = "Extra"
+            description = "Artificial Intelligence commands"
+            hidden = False
+            emoji = "🤖"
+        self.cog_info = cog_info
 
     @commands.hybrid_command(
         name="ai",
@@ -43,9 +50,20 @@ class AI(commands.Cog):
             api_base_url = ai_settings.get("api_base_url")
             api_key = ai_settings.get("api_key")
             max_tokens = ai_settings.get("max_tokens", 500)
+            system_prompt = ai_settings.get("system_prompt")
+            context_content = ai_settings.get("context_content")
 
             if not api_base_url or not api_key:
                 return await ctx.send("AI is not properly configured. Missing API URL or Key.", ephemeral=True)
+
+            # Build messages payload
+            messages = []
+            if system_prompt or context_content:
+                sys_msg = ""
+                if system_prompt: sys_msg += f"{system_prompt}\n\n"
+                if context_content: sys_msg += f"Additional Context/Rules:\n{context_content}"
+                messages.append({"role": "system", "content": sys_msg.strip()})
+            messages.append({"role": "user", "content": question})
 
             # Call the AI API
             async with httpx.AsyncClient() as client:
@@ -55,9 +73,7 @@ class AI(commands.Cog):
                 }
                 payload = {
                     "model": "gpt-3.5-turbo",
-                    "messages": [
-                        {"role": "user", "content": question}
-                    ],
+                    "messages": messages,
                     "max_tokens": max_tokens
                 }
                 

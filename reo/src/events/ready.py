@@ -67,11 +67,7 @@ class ready(commands.Cog):
         await self.bot.wait_until_ready()
 
         activities = [
-            lambda: discord.Activity(type=discord.ActivityType.listening, name="/help"),
-            lambda: discord.Activity(type=discord.ActivityType.watching, name=f"{len(self.bot.guilds)} servers"),
-            lambda: discord.Activity(type=discord.ActivityType.watching, name=f"{sum(g.member_count for g in self.bot.guilds if g.member_count)} users"),
-            lambda: discord.Activity(type=discord.ActivityType.watching, name=f"{len(self.bot.commands)} commands"),
-            lambda: discord.Activity(type=discord.ActivityType.watching, name=getattr(self.bot.urls, "WEBSITE", "Website")),
+            lambda: discord.Activity(type=discord.ActivityType.playing, name="Buddy Anggota ISCOM"),
         ]
 
         index = 0

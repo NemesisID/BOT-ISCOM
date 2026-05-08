@@ -1367,7 +1367,7 @@ def _render_ai(session: dict[str, Any], guilds: list[dict[str, Any]], current_gu
     <section class="panel">
       <h1>AI Settings</h1>
       <p class="muted">Configure AI integration for your server</p>
-      <form method="post" action="/dashboard/guild/{current_guild['id']}/ai" style="margin-top:18px;">
+      <form method="post" action="/dashboard/guild/{current_guild['id']}/ai" enctype="multipart/form-data" style="margin-top:18px;">
         <div class="switches">
           <label class="check"><input type="checkbox" name="enabled" {"checked" if data.get("enabled") else ""}> Enable AI feature</label>
         </div>
@@ -1382,7 +1382,16 @@ def _render_ai(session: dict[str, Any], guilds: list[dict[str, Any]], current_gu
             <input type="number" min="100" max="4000" name="max_tokens" value="{_escape(data.get('max_tokens', 500))}">
           </label>
         </div>
-        <button class="save-btn" type="submit">Save AI settings</button>
+        <div class="fields" style="margin-top:12px;">
+          <label style="grid-column: span 2;">System Prompt (Roleplay/Rules)
+            <textarea name="system_prompt" placeholder="You are a helpful assistant...">{_escape(data.get('system_prompt', ''))}</textarea>
+          </label>
+          <label style="grid-column: span 2;">Upload Context Knowledge (.txt, .md, .json)
+            <input type="file" name="context_file" accept=".txt,.md,.json">
+            <span style="font-size: 0.8rem; color: var(--muted); margin-top: 4px;">{ 'File uploaded: ' + str(len(data.get('context_content', ''))) + ' bytes stored.' if data.get('context_content') else 'No file uploaded yet.' }</span>
+          </label>
+        </div>
+        <button class="save-btn" type="submit" style="margin-top:12px;">Save AI settings</button>
       </form>
     </section>
     """
@@ -1705,13 +1714,24 @@ async def update_ai_settings(request: Request, guild_id: int):
     session, _, current_guild, state = await _require_dashboard_context(request, guild_id)
     if not session or not current_guild:
         return RedirectResponse("/dashboard", status_code=303)
-    data = await _parse_form(request)
+    form_data = await request.form()
+    data = {key: form_data[key] for key in form_data}
+    
+    context_content = state["ai_settings"].get("context_content")
+    context_file = form_data.get("context_file")
+    if hasattr(context_file, "filename") and context_file.filename:
+        content = await context_file.read()
+        if content:
+            context_content = content.decode("utf-8", errors="ignore")
+
     await storage.ai_settings.update(
         id=state["ai_settings"]["id"],
-        enabled=_bool_from_form(data, "enabled"),
+        enabled=(data.get("enabled") == "on"),
         api_base_url=(data.get("api_base_url") or "").strip() or None,
         api_key=(data.get("api_key") or "").strip() or None,
         max_tokens=int(data.get("max_tokens", 500) or 500),
+        system_prompt=(data.get("system_prompt") or "").strip() or None,
+        context_content=context_content,
     )
     return RedirectResponse(f"/dashboard/guild/{guild_id}/ai?notice=AI%20settings%20saved", status_code=303)
 

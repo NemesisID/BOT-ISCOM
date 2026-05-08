@@ -24,6 +24,8 @@ async def insert(
     api_base_url:str=None,
     api_key:str=None,
     max_tokens:int=None,
+    system_prompt:str=None,
+    context_content:str=None,
     updated_at:str=None,
     created_at:str=None
 ):
@@ -37,6 +39,8 @@ async def update(
     api_base_url:str=None,
     api_key:str=None,
     max_tokens:int=None,
+    system_prompt:str=None,
+    context_content:str=None,
     updated_at:str=None,
     created_at:str=None
 ):
@@ -50,6 +54,8 @@ async def get(
     api_base_url:str=None,
     api_key:str=None,
     max_tokens:int=None,
+    system_prompt:str=None,
+    context_content:str=None,
     updated_at:str=None,
     created_at:str=None
 ):
@@ -63,6 +69,8 @@ async def gets(
     api_base_url:str=None,
     api_key:str=None,
     max_tokens:int=None,
+    system_prompt:str=None,
+    context_content:str=None,
     updated_at:str=None,
     created_at:str=None
 ):
@@ -76,6 +84,8 @@ async def delete(
     api_base_url:str=None,
     api_key:str=None,
     max_tokens:int=None,
+    system_prompt:str=None,
+    context_content:str=None,
     updated_at:str=None,
     created_at:str=None
 ):

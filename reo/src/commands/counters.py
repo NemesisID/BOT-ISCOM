@@ -14,6 +14,13 @@ import storage
 class Counters(commands.Cog):
     def __init__(self, bot):
         self.bot: AutoShardedBot = bot
+        class cog_info:
+            name = "Counters"
+            category = "Extra"
+            description = "Automatic channel counters"
+            hidden = False
+            emoji = "📊"
+        self.cog_info = cog_info
         self.task = None
 
     async def cog_load(self):
@@ -43,26 +50,39 @@ class Counters(commands.Cog):
                 bot_count = sum(1 for m in guild.members if m.bot)
                 boost_count = guild.premium_subscription_count or 0
 
+                everyone_role = guild.default_role
+
+                async def _secure_channel(channel, new_name):
+                    try:
+                        await channel.edit(name=new_name)
+                        perms = channel.overwrites_for(everyone_role)
+                        if perms.connect != False or perms.view_channel != True:
+                            perms.connect = False
+                            perms.view_channel = True
+                            await channel.set_permissions(everyone_role, overwrite=perms)
+                    except discord.Forbidden:
+                        pass
+
                 # Update member counter
                 member_channel_id = counter_config.get("member_counter_channel_id")
                 if member_channel_id:
                     member_channel = guild.get_channel(member_channel_id)
                     if member_channel:
-                        await member_channel.edit(name=f"Members: {member_count}")
+                        await _secure_channel(member_channel, f"📊〢Members: {member_count}")
 
                 # Update bot counter
                 bot_channel_id = counter_config.get("bot_counter_channel_id")
                 if bot_channel_id:
                     bot_channel = guild.get_channel(bot_channel_id)
                     if bot_channel:
-                        await bot_channel.edit(name=f"Bots: {bot_count}")
+                        await _secure_channel(bot_channel, f"📊〢Bots: {bot_count}")
 
                 # Update boost counter
                 boost_channel_id = counter_config.get("boost_counter_channel_id")
                 if boost_channel_id:
                     boost_channel = guild.get_channel(boost_channel_id)
                     if boost_channel:
-                        await boost_channel.edit(name=f"Boosts: {boost_count}")
+                        await _secure_channel(boost_channel, f"📊〢Boosts: {boost_count}")
 
             except Exception as e:
                 logger.error(f"Error updating counters for guild {guild.id}: {e}")
