@@ -66,24 +66,25 @@ class AI(commands.Cog):
                 messages.append({"role": "system", "content": sys_msg.strip()})
             messages.append({"role": "user", "content": question})
 
-            # Call the AI API
-            async with httpx.AsyncClient() as client:
-                headers = {
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json"
-                }
-                payload = {
-                    "model": model,
-                    "messages": messages,
-                    "max_tokens": max_tokens
-                }
-                
-                response = await client.post(
-                    f"{api_base_url.rstrip('/')}/chat/completions",
-                    headers=headers,
-                    json=payload,
-                    timeout=30.0
-                )
+            # Call the AI API with typing status
+            async with ctx.typing():
+                async with httpx.AsyncClient() as client:
+                    headers = {
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json"
+                    }
+                    payload = {
+                        "model": model,
+                        "messages": messages,
+                        "max_tokens": max_tokens
+                    }
+                    
+                    response = await client.post(
+                        f"{api_base_url.rstrip('/')}/chat/completions",
+                        headers=headers,
+                        json=payload,
+                        timeout=30.0
+                    )
 
             if response.status_code != 200:
                 logger.error(f"AI API error: {response.status_code} - {response.text}")

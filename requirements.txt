@@ -39,3 +39,4 @@ uvicorn
 asyncpg
 chat_exporter
 pyfiglet
+python-multipart

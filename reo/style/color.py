@@ -14,5 +14,7 @@ black = 000000
 gray = 0x808080
 cyan = 0x00eeff
 
+DEFAULT = 0x5865F2
+
 def random_color():
     return discord.Colour(random.randint(0, 0xFFFFFF))

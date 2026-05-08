@@ -176,6 +176,7 @@ class AutoShardedBot(commands.AutoShardedBot):
         self.log = Log(self)
         self.users_data = config.users
         self.emoji = emoji # EmojiManager()
+        self.color = color
         self.cache = cache
         self.BotConfig = BotConfig
         self.channels = config.channels
@@ -292,12 +293,14 @@ class AutoShardedBot(commands.AutoShardedBot):
         importlib.reload(config)
         importlib.reload(emoji)
         importlib.reload(urls)
+        importlib.reload(color)
         importlib.reload(storage)
         self.users_data = config.users
         self.channels = config.channels
         self.BotConfig = config.BotConfigClass()
         self.urls = urls
         self.emoji = EmojiManager()
+        self.color = color
         self.storage = storage
         self.database = self.storage
 
