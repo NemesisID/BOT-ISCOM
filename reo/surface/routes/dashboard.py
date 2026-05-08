@@ -1378,6 +1378,9 @@ def _render_ai(session: dict[str, Any], guilds: list[dict[str, Any]], current_gu
           <label>API Key
             <input type="password" name="api_key" value="{_escape(data.get('api_key', ''))}" placeholder="sk-...">
           </label>
+          <label>AI Model
+            <input type="text" name="model" value="{_escape(data.get('model', 'gpt-3.5-turbo'))}" placeholder="gpt-3.5-turbo">
+          </label>
           <label>Max Output Tokens
             <input type="number" min="100" max="4000" name="max_tokens" value="{_escape(data.get('max_tokens', 500))}">
           </label>
@@ -1730,6 +1733,7 @@ async def update_ai_settings(request: Request, guild_id: int):
         api_base_url=(data.get("api_base_url") or "").strip() or None,
         api_key=(data.get("api_key") or "").strip() or None,
         max_tokens=int(data.get("max_tokens", 500) or 500),
+        model=(data.get("model") or "gpt-3.5-turbo").strip() or None,
         system_prompt=(data.get("system_prompt") or "").strip() or None,
         context_content=context_content,
     )

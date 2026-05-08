@@ -50,6 +50,7 @@ class AI(commands.Cog):
             api_base_url = ai_settings.get("api_base_url")
             api_key = ai_settings.get("api_key")
             max_tokens = ai_settings.get("max_tokens", 500)
+            model = ai_settings.get("model") or "gpt-3.5-turbo"
             system_prompt = ai_settings.get("system_prompt")
             context_content = ai_settings.get("context_content")
 
@@ -72,7 +73,7 @@ class AI(commands.Cog):
                     "Content-Type": "application/json"
                 }
                 payload = {
-                    "model": "gpt-3.5-turbo",
+                    "model": model,
                     "messages": messages,
                     "max_tokens": max_tokens
                 }

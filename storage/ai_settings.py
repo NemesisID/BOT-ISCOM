@@ -26,6 +26,7 @@ async def insert(
     max_tokens:int=None,
     system_prompt:str=None,
     context_content:str=None,
+    model:str=None,
     updated_at:str=None,
     created_at:str=None
 ):
@@ -41,6 +42,7 @@ async def update(
     max_tokens:int=None,
     system_prompt:str=None,
     context_content:str=None,
+    model:str=None,
     updated_at:str=None,
     created_at:str=None
 ):
@@ -56,6 +58,7 @@ async def get(
     max_tokens:int=None,
     system_prompt:str=None,
     context_content:str=None,
+    model:str=None,
     updated_at:str=None,
     created_at:str=None
 ):
@@ -71,6 +74,7 @@ async def gets(
     max_tokens:int=None,
     system_prompt:str=None,
     context_content:str=None,
+    model:str=None,
     updated_at:str=None,
     created_at:str=None
 ):
@@ -86,6 +90,7 @@ async def delete(
     max_tokens:int=None,
     system_prompt:str=None,
     context_content:str=None,
+    model:str=None,
     updated_at:str=None,
     created_at:str=None
 ):
