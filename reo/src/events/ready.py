@@ -93,11 +93,11 @@ class ready(commands.Cog):
     async def send_shard_log(self, msg, embed_color=color.green):
         try:
             shards_log_webhook = self.bot.channels.shards_log_webhook
-            if shards_log_webhook:
+            if shards_log_webhook and (shards_log_webhook.startswith("http://") or shards_log_webhook.startswith("https://")):
                 embed = discord.Embed(description=f"{msg}", color=embed_color)
                 requests.post(shards_log_webhook, json={"embeds": [embed.to_dict()]},timeout=5)
             else:
-                logger.warning(f"Could not send shard log: {msg}")
+                logger.warning(f"Could not send shard log: {msg} (invalid or empty webhook URL)")
         except Exception as e:
             logger.error(f"Error in file {__file__}: {traceback.format_exc()}")
 
