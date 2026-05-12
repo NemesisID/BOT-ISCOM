@@ -121,6 +121,66 @@ class AI(commands.Cog):
             )
             await ctx.send("An error occurred while processing your request.", ephemeral=True)
 
+    @commands.hybrid_command(
+        name="aimodels",
+        with_app_command=True,
+        help="List available AI models from the configured provider",
+    )
+    @checks.ignore_check()
+    @checks.blacklist_check()
+    async def aimodels(self, ctx: commands.Context):
+        try:
+            if ctx.interaction and not ctx.interaction.response.is_done():
+                await ctx.defer()
+
+            if not ctx.guild:
+                return await ctx.send("This command can only be used in a server.", ephemeral=True)
+
+            ai_settings = self.bot.cache.ai_settings.get(str(ctx.guild.id))
+            if not ai_settings:
+                return await ctx.send("AI is not configured for this server.", ephemeral=True)
+
+            api_base_url = ai_settings.get("api_base_url")
+            api_key = ai_settings.get("api_key")
+
+            if not api_base_url or not api_key:
+                return await ctx.send("AI is not properly configured. Missing API URL or Key.", ephemeral=True)
+
+            async with ctx.typing():
+                async with httpx.AsyncClient() as client:
+                    headers = {
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json"
+                    }
+                    response = await client.get(
+                        f"{api_base_url.rstrip('/')}/models",
+                        headers=headers,
+                        timeout=10.0
+                    )
+
+            if response.status_code != 200:
+                logger.error(f"[AI Models Debug] Error: {response.status_code} - {response.text}")
+                return await ctx.send(f"Failed to fetch models: {response.status_code}", ephemeral=True)
+
+            data = response.json()
+            models_list = [m.get("id") for m in data.get("data", [])]
+            models_str = ", ".join(models_list)
+            
+            logger.info(f"[AI Models Debug] Supported models: {models_str}")
+            
+            if not models_str:
+                return await ctx.send("No models returned by the provider.", ephemeral=True)
+
+            # Send list to chat, truncate if too long
+            if len(models_str) > 1900:
+                models_str = models_str[:1900] + "..."
+                
+            await ctx.send(f"**Available Models on x5LAB:**\n`{models_str}`")
+
+        except Exception as e:
+            logger.error(f"Error fetching models: {e}")
+            await ctx.send("An error occurred while fetching models.", ephemeral=True)
+
 
 async def setup(bot):
     await bot.add_cog(AI(bot))
