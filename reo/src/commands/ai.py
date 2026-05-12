@@ -79,8 +79,13 @@ class AI(commands.Cog):
                         "max_tokens": max_tokens
                     }
                     
+                    target_url = f"{api_base_url.rstrip('/')}/chat/completions"
+                    logger.info(f"[AI Debug] Outgoing URL: {target_url}")
+                    logger.info(f"[AI Debug] Outgoing Model: {model}")
+                    logger.info(f"[AI Debug] Outgoing Payload: {payload}")
+                    
                     response = await client.post(
-                        f"{api_base_url.rstrip('/')}/chat/completions",
+                        target_url,
                         headers=headers,
                         json=payload,
                         timeout=30.0
@@ -88,6 +93,7 @@ class AI(commands.Cog):
 
             if response.status_code != 200:
                 logger.error(f"AI API error: {response.status_code} - {response.text}")
+                logger.error(f"[AI Debug] Failed response details: {response.status_code} - {response.text}")
                 return await ctx.send(f"AI API returned an error: {response.status_code}", ephemeral=True)
 
             data = response.json()
