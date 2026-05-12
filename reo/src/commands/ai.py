@@ -69,35 +69,98 @@ class AI(commands.Cog):
             # Call the AI API with typing status
             async with ctx.typing():
                 async with httpx.AsyncClient() as client:
-                    headers = {
+                    # Method 1: OpenAI chat/completions
+                    headers_openai = {
                         "Authorization": f"Bearer {api_key}",
                         "Content-Type": "application/json"
                     }
-                    payload = {
+                    payload_openai = {
                         "model": model,
                         "messages": messages,
                         "max_tokens": max_tokens
                     }
                     
                     target_url = f"{api_base_url.rstrip('/')}/chat/completions"
-                    logger.info(f"[AI Debug] Outgoing URL: {target_url}")
-                    logger.info(f"[AI Debug] Outgoing Model: {model}")
-                    logger.info(f"[AI Debug] Outgoing Payload: {payload}")
+                    logger.info(f"[AI Debug] Trying OpenAI endpoint: {target_url}")
+                    logger.info(f"[AI Debug] Payload: {payload_openai}")
                     
-                    response = await client.post(
-                        target_url,
-                        headers=headers,
-                        json=payload,
-                        timeout=30.0
-                    )
+                    try:
+                        response = await client.post(
+                            target_url,
+                            headers=headers_openai,
+                            json=payload_openai,
+                            timeout=30.0
+                        )
+                    except Exception as e:
+                        logger.error(f"[AI Debug] OpenAI request exception: {e}")
+                        response = None
 
-            if response.status_code != 200:
-                logger.error(f"AI API error: {response.status_code} - {response.text}")
-                logger.error(f"[AI Debug] Failed response details: {response.status_code} - {response.text}")
-                return await ctx.send(f"AI API returned an error: {response.status_code}", ephemeral=True)
+                    # If OpenAI failed, try Anthropic messages fallback
+                    is_openai_success = response is not None and response.status_code == 200
+                    
+                    if not is_openai_success:
+                        logger.warning(f"[AI Debug] OpenAI endpoint failed (status {response.status_code if response else 'None'}). Trying Anthropic protocol fallback...")
+                        
+                        # Prepare Anthropic messages & system parameter
+                        anthropic_messages = []
+                        anthropic_system = None
+                        
+                        for msg in messages:
+                            if msg.get("role") == "system":
+                                anthropic_system = msg.get("content")
+                            else:
+                                anthropic_messages.append({
+                                    "role": msg.get("role"),
+                                    "content": msg.get("content")
+                                })
+                        
+                        headers_anthropic = {
+                            "x-api-key": api_key,
+                            "anthropic-version": "2023-06-01",
+                            "content-type": "application/json"
+                        }
+                        payload_anthropic = {
+                            "model": model,
+                            "messages": anthropic_messages,
+                            "max_tokens": max_tokens
+                        }
+                        if anthropic_system:
+                            payload_anthropic["system"] = anthropic_system
+                            
+                        anthropic_url = f"{api_base_url.rstrip('/')}/messages"
+                        logger.info(f"[AI Debug] Trying Anthropic endpoint: {anthropic_url}")
+                        logger.info(f"[AI Debug] Payload: {payload_anthropic}")
+                        
+                        try:
+                            response_anthropic = await client.post(
+                                anthropic_url,
+                                headers=headers_anthropic,
+                                json=payload_anthropic,
+                                timeout=30.0
+                            )
+                            if response_anthropic.status_code == 200:
+                                response = response_anthropic
+                            else:
+                                logger.error(f"[AI Debug] Anthropic fallback failed: {response_anthropic.status_code} - {response_anthropic.text}")
+                        except Exception as e:
+                            logger.error(f"[AI Debug] Anthropic request exception: {e}")
+
+            if response is None or response.status_code != 200:
+                status_code = response.status_code if response else "Unknown"
+                resp_text = response.text if response else "No response"
+                logger.error(f"AI API error: {status_code} - {resp_text}")
+                return await ctx.send(f"AI API returned an error: {status_code}", ephemeral=True)
 
             data = response.json()
-            answer = data.get("choices", [{}])[0].get("message", {}).get("content", "No response received.")
+            # Parse content based on which protocol succeeded
+            if "choices" in data:
+                answer = data.get("choices", [{}])[0].get("message", {}).get("content", "No response received.")
+            elif "content" in data and isinstance(data["content"], list):
+                # Anthropic format
+                text_parts = [part.get("text", "") for part in data["content"] if part.get("type") == "text"]
+                answer = "".join(text_parts) or "No response received."
+            else:
+                answer = data.get("choices", [{}])[0].get("message", {}).get("content", "No response received.")
 
             # Truncate if too long for Discord
             if len(answer) > 2000:
