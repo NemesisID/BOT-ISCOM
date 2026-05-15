@@ -369,6 +369,14 @@ class Music(commands.Cog):
                         vc: wavelink.Player = await destination.connect(
                             cls=wavelink.Player, timeout=60, self_deaf=True
                         )
+                    except wavelink.exceptions.InvalidNodeException:
+                        return await ctx.reply(
+                            embed=discord.Embed(
+                                description=f"{self.bot.emoji.ERROR} | Music server sedang tidak terhubung. Tidak ada Lavalink node yang tersedia saat ini.\nSilakan coba lagi nanti.",
+                                color=color.red,
+                            ),
+                            delete_after=15,
+                        )
                     except (wavelink.exceptions.ChannelTimeoutException, TimeoutError):
                         return await ctx.reply(
                             embed=discord.Embed(
