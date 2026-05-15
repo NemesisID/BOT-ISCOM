@@ -365,9 +365,18 @@ class Music(commands.Cog):
 
                 if not ctx.guild.voice_client:
 
-                    vc: wavelink.Player = await destination.connect(
-                        cls=wavelink.Player, timeout=60, self_deaf=True
-                    )
+                    try:
+                        vc: wavelink.Player = await destination.connect(
+                            cls=wavelink.Player, timeout=60, self_deaf=True
+                        )
+                    except (wavelink.exceptions.ChannelTimeoutException, TimeoutError):
+                        return await ctx.reply(
+                            embed=discord.Embed(
+                                description=f"{self.bot.emoji.ERROR} | Gagal terhubung ke voice channel. Server mungkin sedang sibuk atau ada masalah jaringan.\nCoba lagi atau pindah ke voice channel lain.",
+                                color=color.red,
+                            ),
+                            delete_after=15,
+                        )
 
                     vc.inactive_timeout = 10
 
@@ -426,7 +435,17 @@ class Music(commands.Cog):
 
                 # Use the new search methood correctly
 
-                result = await wavelink.Playable.search(search)
+                try:
+                    result = await wavelink.Playable.search(search)
+                except (wavelink.exceptions.NodeException, Exception) as e:
+                    logger.error(f"[Music] Track search failed: {e}")
+                    return await ctx.reply(
+                        embed=discord.Embed(
+                            description=f"{self.bot.emoji.ERROR} | Music server sedang tidak tersedia atau mengalami gangguan. Silakan coba lagi nanti.",
+                            color=color.red,
+                        ),
+                        delete_after=15,
+                    )
 
                 if not result:
 

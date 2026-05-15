@@ -95,3 +95,6 @@ venv.bak/
 ehthumbs.db
 ehthumbs_vista.db
 [Tt]humbs.db
+
+# AI Slop
+CLAUDE.md

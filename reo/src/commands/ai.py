@@ -22,6 +22,80 @@ class AI(commands.Cog):
             emoji = "🤖"
         self.cog_info = cog_info
 
+    async def _try_ai_request(self, api_base_url: str, api_key: str, model: str, messages: list, max_tokens: int):
+        async with httpx.AsyncClient() as client:
+            headers_openai = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            payload_openai = {
+                "model": model,
+                "messages": messages,
+                "max_tokens": max_tokens
+            }
+
+            target_url = f"{api_base_url.rstrip('/')}/chat/completions"
+            logger.info(f"[AI] Trying OpenAI endpoint: {target_url} with model: {model}")
+
+            try:
+                response = await client.post(
+                    target_url,
+                    headers=headers_openai,
+                    json=payload_openai,
+                    timeout=30.0
+                )
+            except Exception as e:
+                logger.error(f"[AI] OpenAI request exception: {e}")
+                response = None
+
+            if response is not None and response.status_code == 200:
+                return response
+
+            logger.warning(f"[AI] OpenAI endpoint failed (status {response.status_code if response else 'None'}). Trying Anthropic protocol fallback...")
+
+            anthropic_messages = []
+            anthropic_system = None
+
+            for msg in messages:
+                if msg.get("role") == "system":
+                    anthropic_system = msg.get("content")
+                else:
+                    anthropic_messages.append({
+                        "role": msg.get("role"),
+                        "content": msg.get("content")
+                    })
+
+            headers_anthropic = {
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json"
+            }
+            payload_anthropic = {
+                "model": model,
+                "messages": anthropic_messages,
+                "max_tokens": max_tokens
+            }
+            if anthropic_system:
+                payload_anthropic["system"] = anthropic_system
+
+            anthropic_url = f"{api_base_url.rstrip('/')}/messages"
+            logger.info(f"[AI] Trying Anthropic endpoint: {anthropic_url}")
+
+            try:
+                response_anthropic = await client.post(
+                    anthropic_url,
+                    headers=headers_anthropic,
+                    json=payload_anthropic,
+                    timeout=30.0
+                )
+                if response_anthropic.status_code == 200:
+                    return response_anthropic
+                logger.error(f"[AI] Anthropic fallback failed: {response_anthropic.status_code} - {response_anthropic.text}")
+                return response_anthropic
+            except Exception as e:
+                logger.error(f"[AI] Anthropic request exception: {e}")
+                return response
+
     @commands.hybrid_command(
         name="ai",
         with_app_command=True,
@@ -68,88 +142,28 @@ class AI(commands.Cog):
 
             # Call the AI API with typing status
             async with ctx.typing():
-                async with httpx.AsyncClient() as client:
-                    # Method 1: OpenAI chat/completions
-                    headers_openai = {
-                        "Authorization": f"Bearer {api_key}",
-                        "Content-Type": "application/json"
-                    }
-                    payload_openai = {
-                        "model": model,
-                        "messages": messages,
-                        "max_tokens": max_tokens
-                    }
-                    
-                    target_url = f"{api_base_url.rstrip('/')}/chat/completions"
-                    logger.info(f"[AI Debug] Trying OpenAI endpoint: {target_url}")
-                    logger.info(f"[AI Debug] Payload: {payload_openai}")
-                    
-                    try:
-                        response = await client.post(
-                            target_url,
-                            headers=headers_openai,
-                            json=payload_openai,
-                            timeout=30.0
-                        )
-                    except Exception as e:
-                        logger.error(f"[AI Debug] OpenAI request exception: {e}")
-                        response = None
+                response = await self._try_ai_request(api_base_url, api_key, model, messages, max_tokens)
 
-                    # If OpenAI failed, try Anthropic messages fallback
-                    is_openai_success = response is not None and response.status_code == 200
-                    
-                    if not is_openai_success:
-                        logger.warning(f"[AI Debug] OpenAI endpoint failed (status {response.status_code if response else 'None'}). Trying Anthropic protocol fallback...")
-                        
-                        # Prepare Anthropic messages & system parameter
-                        anthropic_messages = []
-                        anthropic_system = None
-                        
-                        for msg in messages:
-                            if msg.get("role") == "system":
-                                anthropic_system = msg.get("content")
-                            else:
-                                anthropic_messages.append({
-                                    "role": msg.get("role"),
-                                    "content": msg.get("content")
-                                })
-                        
-                        headers_anthropic = {
-                            "x-api-key": api_key,
-                            "anthropic-version": "2023-06-01",
-                            "content-type": "application/json"
-                        }
-                        payload_anthropic = {
-                            "model": model,
-                            "messages": anthropic_messages,
-                            "max_tokens": max_tokens
-                        }
-                        if anthropic_system:
-                            payload_anthropic["system"] = anthropic_system
-                            
-                        anthropic_url = f"{api_base_url.rstrip('/')}/messages"
-                        logger.info(f"[AI Debug] Trying Anthropic endpoint: {anthropic_url}")
-                        logger.info(f"[AI Debug] Payload: {payload_anthropic}")
-                        
-                        try:
-                            response_anthropic = await client.post(
-                                anthropic_url,
-                                headers=headers_anthropic,
-                                json=payload_anthropic,
-                                timeout=30.0
-                            )
-                            if response_anthropic.status_code == 200:
-                                response = response_anthropic
-                            else:
-                                logger.error(f"[AI Debug] Anthropic fallback failed: {response_anthropic.status_code} - {response_anthropic.text}")
-                        except Exception as e:
-                            logger.error(f"[AI Debug] Anthropic request exception: {e}")
+                # If primary model failed with capacity/404, retry with fallback model
+                if response is None or response.status_code != 200:
+                    fallback_model = ai_settings.get("fallback_model")
+                    if fallback_model and fallback_model != model:
+                        logger.warning(f"[AI] Primary model '{model}' unavailable, trying fallback '{fallback_model}'")
+                        response = await self._try_ai_request(api_base_url, api_key, fallback_model, messages, max_tokens)
 
             if response is None or response.status_code != 200:
                 status_code = response.status_code if response else "Unknown"
                 resp_text = response.text if response else "No response"
                 logger.error(f"AI API error: {status_code} - {resp_text}")
-                return await ctx.send(f"AI API returned an error: {status_code}", ephemeral=True)
+
+                if status_code in (404, 503, 529):
+                    user_msg = "AI provider sedang tidak tersedia atau model sedang sibuk. Silakan coba lagi nanti."
+                elif status_code == 429:
+                    user_msg = "AI rate limit tercapai. Silakan tunggu beberapa saat dan coba lagi."
+                else:
+                    user_msg = f"AI API error ({status_code}). Silakan coba lagi nanti."
+
+                return await ctx.send(user_msg, ephemeral=True)
 
             data = response.json()
             # Parse content based on which protocol succeeded
