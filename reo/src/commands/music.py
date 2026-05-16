@@ -2016,9 +2016,17 @@ class Music(commands.Cog):
                         ),
                     )
 
-            result = await wavelink.Playable.search(
-                search, source=wavelink.TrackSource.YouTube
-            )
+            try:
+                result = await wavelink.Playable.search(
+                    search, source=wavelink.TrackSource.YouTube
+                )
+            except Exception as e:
+                logger.error(f"[Music] Track search failed: {e}")
+                await vc.disconnect()
+                return await message.channel.send(
+                    f"{self.bot.emoji.ERROR} | Music server sedang tidak tersedia. Silakan coba lagi nanti.",
+                    delete_after=10,
+                )
 
             if not result:
 
