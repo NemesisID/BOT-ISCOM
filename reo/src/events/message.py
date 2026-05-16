@@ -289,13 +289,13 @@ class message(commands.Cog):
                 color=color.aqua,
                 description=(
                     f"> Use `{guild_prefix}help` to get the command list\n"
-                    f"> Use the REO support hub if you need setup help or troubleshooting\n\n"
-                    f"-# Powered by REO"
+                    f"> Use the BOT ISCOM support hub if you need setup help or troubleshooting\n\n"
+                    f"-# Powered by BOT ISCOM"
                 ),
             )
 
             embed.set_footer(
-                text="REO • CodeX Development",
+                text="BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 

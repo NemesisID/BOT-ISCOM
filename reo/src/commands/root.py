@@ -180,7 +180,7 @@ class Root(commands.Cog):
             reloading_embed.set_thumbnail(url=self.bot.user.display_avatar.url)
 
             reloading_embed.set_footer(
-                text="REO • CodeX Development",
+                text="BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 
@@ -222,7 +222,7 @@ class Root(commands.Cog):
                 inline=True,
             )
 
-            reloading_embed.title = "Successfully Reloaded REO Src"
+            reloading_embed.title = "Successfully Reloaded BOT ISCOM Src"
 
             reloading_embed.description = (
                 f"\n\n**__Bot Ping:__** `{pings.bot(self.bot)}ms`"
@@ -239,7 +239,7 @@ class Root(commands.Cog):
             )
 
             reloading_embed.set_footer(
-                text="REO • CodeX Development",
+                text="BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 

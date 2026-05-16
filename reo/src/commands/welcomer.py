@@ -147,7 +147,7 @@ class Welcomer(commands.Cog):
                     embed.description += f"\n\n`{self.bot.BotConfig.PREFIX}{ctx.command.name} {command.name}` - {command.help}"
 
             embed.set_footer(
-                text=f"REO • CodeX Development",
+                text=f"BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 
@@ -554,7 +554,7 @@ class Welcomer(commands.Cog):
                     )
 
                     embed.set_footer(
-                        text=f"REO • CodeX Development07",
+                        text=f"BOT ISCOM • CodeX Development07",
                         icon_url=self.bot.user.display_avatar.url,
                     )
 
@@ -1805,7 +1805,7 @@ class Welcomer(commands.Cog):
                             )
 
                             embed.set_footer(
-                                text=f"REO • CodeX Development07",
+                                text=f"BOT ISCOM • CodeX Development07",
                                 icon_url=self.bot.user.display_avatar.url,
                             )
 
@@ -2952,7 +2952,7 @@ class Welcomer(commands.Cog):
                     embed.description += f"\n\n`{self.bot.BotConfig.PREFIX}{ctx.command.name} {command.name}` - {command.help}"
 
             embed.set_footer(
-                text=f"REO • CodeX Development07",
+                text=f"BOT ISCOM • CodeX Development07",
                 icon_url=self.bot.user.display_avatar.url,
             )
 
@@ -3275,7 +3275,7 @@ class Welcomer(commands.Cog):
                     embed.description += f"\n\n`{self.bot.BotConfig.PREFIX}{ctx.command.name} {command.name}` - {command.help}"
 
             embed.set_footer(
-                text=f"REO • CodeX Development07",
+                text=f"BOT ISCOM • CodeX Development07",
                 icon_url=self.bot.user.display_avatar.url,
             )
 
@@ -3631,7 +3631,7 @@ class Welcomer(commands.Cog):
                     embed.description += f"\n\n`{self.bot.BotConfig.PREFIX}{ctx.command.name} {command.name}` - {command.help}"
 
             embed.set_footer(
-                text=f"REO • CodeX Development07",
+                text=f"BOT ISCOM • CodeX Development07",
                 icon_url=self.bot.user.display_avatar.url,
             )
 

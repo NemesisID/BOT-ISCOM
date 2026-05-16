@@ -151,7 +151,7 @@ class More(commands.Cog):
                 embed.description += f"**`{self.bot.BotConfig.PREFIX}{ctx.command.name}` - {ctx.command.help}**\n"
 
             embed.set_footer(
-                text=f"REO • CodeX Development",
+                text=f"BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 
@@ -373,7 +373,7 @@ class More(commands.Cog):
                 embed.description += f"**`{name}` - {role.mention}**\n"
 
             embed.set_footer(
-                text=f"REO • CodeX Development",
+                text=f"BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 
@@ -517,7 +517,7 @@ class More(commands.Cog):
                 embed.description += f"**`{self.bot.BotConfig.PREFIX}{ctx.command.name}` - {ctx.command.help}**\n"
 
             embed.set_footer(
-                text=f"REO • CodeX Development",
+                text=f"BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 
@@ -823,7 +823,7 @@ class More(commands.Cog):
             )
 
             embed.set_footer(
-                text=f"REO • CodeX Development",
+                text=f"BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 
@@ -8034,7 +8034,7 @@ class More(commands.Cog):
                     embed.description += f"\n\n`{self.bot.BotConfig.PREFIX}{ctx.command.name} {command.name}` - {command.help}"
 
             embed.set_footer(
-                text=f"REO • CodeX Development",
+                text=f"BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 

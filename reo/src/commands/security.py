@@ -99,7 +99,7 @@ class Security(commands.Cog):
                     embed.description += f"\n\n{self.bot.BotConfig.PREFIX}{ctx.command.name} {command.name} - {command.help}"
 
             embed.set_footer(
-                text=f"REO • CodeX Development",
+                text=f"BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 
@@ -281,7 +281,7 @@ class Security(commands.Cog):
                     embed.description += f"`{self.bot.BotConfig.PREFIX}{ctx.command.name} {command.name}` - {command.help}\n"
 
             embed.set_footer(
-                text=f"REO • CodeX Development",
+                text=f"BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 

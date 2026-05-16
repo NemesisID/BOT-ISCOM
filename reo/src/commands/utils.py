@@ -356,7 +356,7 @@ class Utils(commands.Cog):
             if self.bot.developers:
 
                 embed.set_footer(
-                    text=f"REO • CodeX Development",
+                    text=f"BOT ISCOM • CodeX Development",
                     icon_url=self.bot.user.display_avatar.url,
                 )
 

@@ -144,7 +144,7 @@ class HomeView(BaseHelpView):
             desc = (
                 f"- Prefix untuk server ini adalah `{prefix}`\n"
                 f"- Total perintah: `{self.get_all_commands_count()}`\n"
-                f"- [Invite REO]({self.bot.urls.INVITE}) | "
+                f"- [Invite BOT ISCOM]({self.bot.urls.INVITE}) | "
                 f"[Server Support]({self.bot.urls.SUPPORT_SERVER}) | "
                 f"[Vote]({self.bot.urls.VOTE})"
             )
@@ -152,7 +152,7 @@ class HomeView(BaseHelpView):
             desc = (
                 f"- Prefix for this server is `{prefix}`\n"
                 f"- Total commands: `{self.get_all_commands_count()}`\n"
-                f"- [Invite REO]({self.bot.urls.INVITE}) | "
+                f"- [Invite BOT ISCOM]({self.bot.urls.INVITE}) | "
                 f"[Support server]({self.bot.urls.SUPPORT_SERVER}) | "
                 f"[Vote me]({self.bot.urls.VOTE})"
             )

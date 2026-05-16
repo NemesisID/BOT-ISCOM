@@ -109,7 +109,7 @@ def convert_ms_to_beautiful_time(ms: int):
         return "Unknown"
 
 
-class REOMusicControllerView(discord.ui.LayoutView):
+class ISCOMMusicControllerView(discord.ui.LayoutView):
 
     def __init__(
         self,
@@ -138,7 +138,7 @@ class REOMusicControllerView(discord.ui.LayoutView):
 
         container = discord.ui.Container()
 
-        container.add_item(discord.ui.TextDisplay("# REO Music"))
+        container.add_item(discord.ui.TextDisplay("# BOT ISCOM Music"))
 
         if self.player and self.player.current:
 
@@ -166,7 +166,7 @@ class REOMusicControllerView(discord.ui.LayoutView):
 
             container.add_item(
                 discord.ui.TextDisplay(
-                    "-# Drop a song name in this channel and REO will start the session."
+                    "-# Drop a song name in this channel and BOT ISCOM will start the session."
                 )
             )
 
@@ -554,7 +554,7 @@ class Music(commands.Cog):
 
             await interaction.response.send_message(
                 embed=discord.Embed(
-                    description="You need to be in the same voice channel as REO.",
+                    description="You need to be in the same voice channel as BOT ISCOM.",
                     color=color.red,
                 ),
                 ephemeral=True,
@@ -1125,7 +1125,7 @@ class Music(commands.Cog):
 
             if end or not vc or not vc.current:
 
-                idle_view = REOMusicControllerView(
+                idle_view = ISCOMMusicControllerView(
                     cog=self,
                     guild=guild,
                     player=None,
@@ -1192,7 +1192,7 @@ class Music(commands.Cog):
 
                     logger.error(f"Traceback: {traceback.format_exc()}")
 
-            view = REOMusicControllerView(
+            view = ISCOMMusicControllerView(
                 cog=self,
                 guild=guild,
                 player=vc,
@@ -2107,7 +2107,7 @@ class Music(commands.Cog):
                 embed.description += f"**`{self.bot.BotConfig.PREFIX}{ctx.command.name}` - {ctx.command.help}**\n"
 
             embed.set_footer(
-                text=f"REO • CodeX Development",
+                text=f"BOT ISCOM • CodeX Development",
                 icon_url=self.bot.user.display_avatar.url,
             )
 

@@ -209,7 +209,7 @@ class Backup(commands.Cog):
                 embed.description += f"\n{self.bot.BotConfig.PREFIX}{ctx.command.name} {command.name} - {command.help}"
 
         embed.set_footer(
-            text=f"REO • CodeX Development", icon_url=self.bot.user.display_avatar.url
+            text=f"BOT ISCOM • CodeX Development", icon_url=self.bot.user.display_avatar.url
         )
 
         await ctx.send(embed=embed)
