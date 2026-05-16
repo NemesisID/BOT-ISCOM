@@ -441,10 +441,8 @@ class Music(commands.Cog):
                             ),
                         )
 
-                # Use the new search methood correctly
-
                 try:
-                    result = await wavelink.Playable.search(search)
+                    result = await wavelink.Playable.search(search, source="spsearch")
                 except (wavelink.exceptions.NodeException, Exception) as e:
                     logger.error(f"[Music] Track search failed: {e}")
                     return await ctx.reply(
@@ -2019,7 +2017,7 @@ class Music(commands.Cog):
                     )
 
             result = await wavelink.Playable.search(
-                search, source=wavelink.TrackSource.YouTube
+                search, source="spsearch"
             )
 
             if not result:

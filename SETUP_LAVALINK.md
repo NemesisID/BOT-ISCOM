@@ -39,9 +39,7 @@ server:
 
 lavalink:
   plugins:
-    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.3.0"
-      repository: "https://maven.lavalink.dev/releases"
-    - dependency: "dev.lavalink.youtube:youtube-plugin:1.11.5"
+    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.8.1"
       repository: "https://maven.lavalink.dev/releases"
   server:
     password: "ganti_dengan_password_kamu"
