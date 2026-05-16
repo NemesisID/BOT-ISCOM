@@ -442,7 +442,7 @@ class Music(commands.Cog):
                         )
 
                 try:
-                    result = await wavelink.Playable.search(search, source="spsearch")
+                    result = await wavelink.Playable.search(search, source="dzsearch")
                 except (wavelink.exceptions.NodeException, Exception) as e:
                     logger.error(f"[Music] Track search failed: {e}")
                     return await ctx.reply(
@@ -2017,7 +2017,7 @@ class Music(commands.Cog):
                     )
 
             result = await wavelink.Playable.search(
-                search, source="spsearch"
+                search, source="dzsearch"
             )
 
             if not result:
